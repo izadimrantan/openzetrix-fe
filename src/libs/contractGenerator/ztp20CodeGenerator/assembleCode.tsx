@@ -1,4 +1,4 @@
-import { approveCode, transferCode, transferFromCode, mintCode, burnCode } from './individualMainFunctions';
+import { approveCode, transferCode, transferFromCode } from './individualMainFunctions';
 import { allowanceCode, balanceOfCode, contractInfoCode } from './individualQueryFunctions';
 import { baseCodePrefixes, utilityCode, initCode } from './baseFunctions';
 import { Ztp20Options, Ztp20OptionsCodeMap } from '../ztpOptions';
@@ -68,8 +68,6 @@ function query(input_str) {
 export function completeZtp20CodeAssembly(ztp20Options: Ztp20Options[]): string {
     const fullMainRecipe = [...ztp20MainRecipe];
     const fullQueryRecipe = [...ztp20QueryRecipe];
-    // console.log(ztp20Options);
-    // console.log(typeof(ztp20Options));
     fullMainRecipe.push(...ztp20Options.filter(option => Ztp20OptionsCodeMap[option]).map(option => Ztp20OptionsCodeMap[option]));
 
     let ztp20Code = ""
