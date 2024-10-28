@@ -61,3 +61,5 @@ export function sign(blob: string): Promise<any> {
         }
     })
 }
+
+// export type ZtpOptions = Ztp20Options | Ztp721Options | Ztp1155Options;

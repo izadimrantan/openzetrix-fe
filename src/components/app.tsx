@@ -15,7 +15,6 @@ export default function AppContext(props: any) {
     // List of state that need to be use globally
     const [walletAddress, setWalletAddress] = useState<string>("")
 
-
     // Set value for context
     const contextValue = {
         walletAddress,

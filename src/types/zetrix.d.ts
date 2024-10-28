@@ -13,3 +13,8 @@ interface Zetrix {
 interface Window {
   zetrix: Zetrix;
 }
+
+interface SmartContractCode {
+  name: string;
+  code: string;
+}
