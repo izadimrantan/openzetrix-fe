@@ -1,47 +1,109 @@
 "use client"
+
 import ButtonSecondary from "@/components/button_secondary";
 import Container from "@/components/container";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
 import { completeZtp20CodeAssembly } from "@/libs/contractGenerator/ztp20CodeGenerator/assembleCode";
-import { Ztp20Options } from "@/libs/contractGenerator/ztp20CodeGenerator/individualMainFunctions";
-import OptionSelection from "@/components/option_select";
+import { ZtpOptions, Ztp20Options, Ztp721Options, Ztp1155Options } from "@/libs/contractGenerator/ztpOptions";
+import { RadioGroup, Radio } from "@headlessui/react";
+import { CheckCircleIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
+import Spinner from "@/components/spinner";
+import Snackbar from "@/components/snackbar";
 
 export default function Wizard() {
   const router = useRouter();
-  const [contractType, setContractType] = useState<string>("ZTP20");
-  const [selectedOptions, setSelectedOptions] = useState<Ztp20Options[]>([]);
+  const codeRef = useRef<HTMLElement>(null);  // Reference for the code block
 
+  const [contractType, setContractType] = useState<string>("ZTP20");
+  const [selectedOptions, setSelectedOptions] = useState<ZtpOptions[]>([]);
+  const [generatedCode, setGeneratedCode] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackBarMessage, setSnackbarMessage] = useState<string>("");
+  
   const listOfContractTypes = ["ZTP20", "ZTP721", "ZTP1155"];
 
   useEffect(() => {
-    // Set the initial contract type based on the hash or default to 'ZTP20'
     const hash = window.location.hash.replace('#', '');
     if (listOfContractTypes.includes(hash)) {
       setContractType(hash);
+      setSelectedOptions([]);
+      setGeneratedCode("");
     } else {
-      router.replace('/wizard/#ztp20');
+      router.replace(`/wizard/#${contractType}`);
     }
   }, [router]);
 
   useEffect(() => {
-    // Highlight the code whenever the contractType changes
-    document.querySelectorAll('pre code').forEach((block) => {
-      hljs.highlightElement(block as HTMLElement);
-    });
-  }, [contractType]);
+    if (codeRef.current) {
+      delete codeRef.current.dataset.highlighted;
+      hljs.highlightElement(codeRef.current);
+    }
+  }, [generatedCode]);
+
+  useEffect(() => {
+    generateCode();
+  }, [selectedOptions, contractType]);
+
+  const copyToClipboard = async () => {
+    if (generatedCode) {
+      await navigator.clipboard.writeText(generatedCode);
+      setSnackbarMessage("Code copied to clipboard!");
+      handleShowSnackbar();
+    }
+  };
+
+  const openZetrixIDE = () => {
+    window.open("https://ide.zetrix.com", "_blank");
+  };
+
+  const handleShowSnackbar = () => {
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleContractTypeChange = (type: string) => {
     setContractType(type);
+    setSelectedOptions([]);
+    setGeneratedCode("");
     router.push(`/wizard/#${type}`);
   };
 
   const generateCode = () => {
-    return completeZtp20CodeAssembly(selectedOptions)
+    let code = "";
+    if (contractType === "ZTP20") {
+      code = completeZtp20CodeAssembly(selectedOptions as Ztp20Options[]);
+    } 
+    setGeneratedCode(code);
+    setLoading(false);
   };
 
+  // Mapping contract types to the appropriate options enum
+  const getOptions = () => {
+    switch (contractType) {
+      case "ZTP20": return Ztp20Options;
+      case "ZTP721": return Ztp721Options;
+      case "ZTP1155": return Ztp1155Options;
+      default: return Ztp20Options;
+    }
+  };
+
+  // Toggle selected option in the state
+  const toggleOption = (option: ZtpOptions) => {
+    setSelectedOptions(prev => 
+      prev.includes(option) ? prev.filter(opt => opt !== option) : [...prev, option]
+    );
+    setSnackbarMessage("Updated smart contract!");
+    handleShowSnackbar();
+  };
+
+  const options = getOptions();
 
   return (
     <Container activeKey="wizard">
@@ -63,25 +125,61 @@ export default function Wizard() {
             ))}
           </div>
           <div className="flex space-x-4">
-            <ButtonSecondary>Copy to Clipboard</ButtonSecondary>
+            <ButtonSecondary onClick={copyToClipboard}>Copy to Clipboard</ButtonSecondary>
+            <ButtonSecondary onClick={openZetrixIDE}>Deploy on Zetrix IDE</ButtonSecondary>
             <ButtonSecondary>Download</ButtonSecondary>
+            {snackbarOpen && (
+              <Snackbar message={snackBarMessage} onClose={handleCloseSnackbar} />
+            )}
           </div>
         </nav>
 
-        {/* Settings and Code Sections */}
         <div className="flex space-x-4 mt-6">
           <div id="settings-section" className="w-1/5 bg-black">
-            {/* Settings for the selected contract type */}
             <h2 className="text-lg font-bold">Options</h2>
-            {/* Add form elements for settings here */}
-            <OptionSelection />
+
+            <div className="w-full mt-4">
+              <div className="mx-auto w-full max-w-md">
+                <RadioGroup value={selectedOptions} className="space-y-2">
+                  {Object.entries(options).map(([key, tooltip]) => (
+                    <Radio
+                      key={key}
+                      value={key}
+                      onClick={() => toggleOption(key as ZtpOptions)}
+                      className="group relative flex cursor-pointer rounded-lg bg-white/5 py-4 px-5 text-white shadow-md transition focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-white/10"
+                    >
+                      <div className="flex w-full items-center justify-between">
+                        <div className="text-sm font-semibold text-white">{key}</div>
+                        {selectedOptions.includes(key as ZtpOptions) ? (
+                          <CheckCircleIcon className="w-6 h-6 text-white opacity-100 transition" />
+                        ) : (
+                          <div className="relative group">
+                            <QuestionMarkCircleIcon className="w-6 h-6 text-white/50 group-hover:text-white transition" />
+                            <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 bg-gray-800 text-white text-sm rounded px-4 py-1 opacity-0 group-hover:opacity-100 transition">
+                              {tooltip}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </Radio>
+                  ))}
+                </RadioGroup>
+              </div>
+            </div>
           </div>
           
           <div id="code-section" className="w-4/5 bg-black border rounded-md max-h-screen overflow-y-auto">
-            {/* Generated Smart Contract Code */}
-            <pre className="overflow-x-auto rounded-md">
-              <code className="language-javascript">{generateCode()}</code>
-            </pre>          
+          {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <Spinner className="w-8 h-8 text-white" /> {/* Adjust class as needed */}
+              </div>
+            ) : (
+              <pre className="overflow-x-auto rounded-md">
+                <code ref={codeRef} className="language-javascript">
+                  {generatedCode}
+                </code>
+              </pre>
+            )}         
           </div>
         </div>
       </div>

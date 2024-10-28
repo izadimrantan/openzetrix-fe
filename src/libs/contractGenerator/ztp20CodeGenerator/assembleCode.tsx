@@ -1,6 +1,7 @@
 import { approveCode, transferCode, transferFromCode, mintCode, burnCode } from './individualMainFunctions';
 import { allowanceCode, balanceOfCode, contractInfoCode } from './individualQueryFunctions';
 import { baseCodePrefixes, utilityCode, initCode } from './baseFunctions';
+import { Ztp20Options, Ztp20OptionsCodeMap } from '../ztpOptions';
 
 const ztp20MainRecipe: SmartContractCode[] = [ 
     approveCode,
@@ -14,15 +15,7 @@ const ztp20QueryRecipe: SmartContractCode[] = [
     contractInfoCode
 ]
 
-export enum Ztp20Options {
-    Mintable = "Mintable",
-    Burnable = "Burnable"
-}
 
-export const Ztp20OptionsCodeMap: Record<Ztp20Options, SmartContractCode> = {
-    [Ztp20Options.Mintable]: mintCode,
-    [Ztp20Options.Burnable]: burnCode,
-}
 
 function mainCodeGenerator(ztp20MainFunctionList: SmartContractCode[]): string {
     let funcList = `
@@ -75,7 +68,8 @@ function query(input_str) {
 export function completeZtp20CodeAssembly(ztp20Options: Ztp20Options[]): string {
     const fullMainRecipe = [...ztp20MainRecipe];
     const fullQueryRecipe = [...ztp20QueryRecipe];
-
+    // console.log(ztp20Options);
+    // console.log(typeof(ztp20Options));
     fullMainRecipe.push(...ztp20Options.filter(option => Ztp20OptionsCodeMap[option]).map(option => Ztp20OptionsCodeMap[option]));
 
     let ztp20Code = ""
