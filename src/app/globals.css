@@ -60,3 +60,21 @@ body {
 .animate-slide-out {
   animation: slide-out 0.3s ease-in forwards;
 }
+
+
+@keyframes letterAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-letter {
+  opacity: 0;
+  animation: letterAnimation 0s steps(1, end) forwards;
+}
+

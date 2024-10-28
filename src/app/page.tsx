@@ -11,7 +11,8 @@ export default function Home() {
       <div className="mx-auto max-w-none">
         <div className="text-center">
           <TitlePrimary>Zetrix Smart Contract, Made Easy.</TitlePrimary>
-          <TitleSecondary className="mt-10">Develop standardized smart contracts in minutes, not months.</TitleSecondary>
+          <TitleSecondary className="mt-10">Standardized smart contracts.</TitleSecondary>
+          <TitleSecondary>In minutes, not months.</TitleSecondary>
         </div>
       </div>
     </Container>
