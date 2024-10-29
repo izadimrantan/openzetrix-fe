@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
-export interface TitleProps {
+interface TitleProps {
     children: ReactNode;
     className?: string;
+    delay?: number;
 }

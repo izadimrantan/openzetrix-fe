@@ -52,7 +52,8 @@ export default function Wizard() {
     if (generatedCode) {
       await navigator.clipboard.writeText(generatedCode);
       setSnackbarMessage("Code copied to clipboard!");
-      handleShowSnackbar();
+      setSnackbarOpen(true);
+
     }
   };
 
@@ -60,8 +61,18 @@ export default function Wizard() {
     window.open("https://ide.zetrix.com", "_blank");
   };
 
-  const handleShowSnackbar = () => {
-    setSnackbarOpen(true);
+  const downloadCode = () => {
+    if (!generatedCode) return;
+  
+    const blob = new Blob([generatedCode], { type: "text/javascript" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "zetrixSmartContract.js";  // Name of the downloaded file
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);  // Clean up the URL object
   };
 
   const handleCloseSnackbar = () => {
@@ -100,7 +111,8 @@ export default function Wizard() {
       prev.includes(option) ? prev.filter(opt => opt !== option) : [...prev, option]
     );
     setSnackbarMessage("Updated smart contract!");
-    handleShowSnackbar();
+    setSnackbarOpen(true);
+
   };
 
   const options = getOptions();
@@ -127,7 +139,7 @@ export default function Wizard() {
           <div className="flex space-x-4">
             <ButtonSecondary onClick={copyToClipboard}>Copy to Clipboard</ButtonSecondary>
             <ButtonSecondary onClick={openZetrixIDE}>Deploy on Zetrix IDE</ButtonSecondary>
-            <ButtonSecondary>Download</ButtonSecondary>
+            <ButtonSecondary onClick={downloadCode}>Download</ButtonSecondary>
             {snackbarOpen && (
               <Snackbar message={snackBarMessage} onClose={handleCloseSnackbar} />
             )}
@@ -155,7 +167,7 @@ export default function Wizard() {
                         ) : (
                           <div className="relative group">
                             <QuestionMarkCircleIcon className="w-6 h-6 text-white/50 group-hover:text-white transition" />
-                            <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 bg-gray-800 text-white text-sm rounded px-4 py-1 opacity-0 group-hover:opacity-100 transition">
+                            <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 bg-black text-white text-sm rounded-lg w-40 h-30 px-4 py-2 shadow-lg border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 overflow-hidden">
                               {tooltip}
                             </div>
                           </div>

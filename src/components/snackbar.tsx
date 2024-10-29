@@ -28,7 +28,7 @@ export default function Snackbar({ message, onClose, duration = 3000 }: Snackbar
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 bg-black text-white py-3 px-6 rounded-lg shadow-lg flex items-center space-x-4 border border-white/20
+      className={`fixed top-16 right-4 z-50 bg-black text-white py-3 px-6 rounded-lg shadow-lg flex items-center space-x-4 border border-white/80
         ${visible ? "animate-slide-in" : "animate-slide-out"}`}
     >
       <span className="text-sm font-medium">{message}</span>

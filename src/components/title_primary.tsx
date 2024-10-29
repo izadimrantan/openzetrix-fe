@@ -1,6 +1,6 @@
 import { TitleProps } from "@/types/misc";
 
-export default function TitlePrimary({ children, className = "" }: TitleProps) {
+export default function TitlePrimary({ children, className = "", delay = 0 }: TitleProps) {
   const letters = Array.from(children as string);
 
   return (
@@ -9,7 +9,7 @@ export default function TitlePrimary({ children, className = "" }: TitleProps) {
         <span
           key={index}
           className="inline-block animate-letter"
-          style={{ animationDelay: `${index * 0.1}s` }}
+          style={{ animationDelay: `${delay + index * 0.1}s` }}
         >
           {letter === " " ? "\u00A0" : letter}
         </span>
