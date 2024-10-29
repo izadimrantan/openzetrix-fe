@@ -8,17 +8,21 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
 import { completeZtp20CodeAssembly } from "@/libs/contractGenerator/ztp20CodeGenerator/assembleCode";
 import { completeZtp721CodeAssembly } from "@/libs/contractGenerator/ztp721CodeGenerator/assembleCode";
-import { ZtpOptions, Ztp20Options, Ztp721Options, Ztp1155Options } from "@/libs/contractGenerator/ztpOptions";
+import { completeZtp1155CodeAssembly } from "@/libs/contractGenerator/ztp1155CodeGenerator/assembleCode";
+// import { ZtpOptions, Ztp20Options, Ztp721Options, Ztp1155Options } from "@/libs/contractGenerator/ztpOptions";
+import { ZtpOptions, Ztp20Options, Ztp721Options } from "@/libs/contractGenerator/ztpOptions";
 import { RadioGroup, Radio } from "@headlessui/react";
 import { CheckCircleIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import Spinner from "@/components/spinner";
 import Snackbar from "@/components/snackbar";
+import ZtpForm from "@/components/ztpForm";
+import { useAppContext } from "@/components/app";
 
 export default function Wizard() {
   const router = useRouter();
   const codeRef = useRef<HTMLElement>(null);  // Reference for the code block
+  const { contractType, setContractType } = useAppContext()
 
-  const [contractType, setContractType] = useState<string>("ZTP20");
   const [selectedOptions, setSelectedOptions] = useState<ZtpOptions[]>([]);
   const [generatedCode, setGeneratedCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,6 +52,10 @@ export default function Wizard() {
   useEffect(() => {
     generateCode();
   }, [selectedOptions, contractType]);
+
+  const handleFormData = (formData: ZtpContractInfo) => {
+    generateCode(formData)
+  }
 
   const copyToClipboard = async () => {
     if (generatedCode) {
@@ -87,12 +95,27 @@ export default function Wizard() {
     router.push(`/wizard/#${type}`);
   };
 
-  const generateCode = () => {
+  const generateCode = (ztpContractInfo?: ZtpContractInfo) => {
     let code = "";
     if (contractType === "ZTP20") {
-      code = completeZtp20CodeAssembly(selectedOptions as Ztp20Options[]);
+      if (ztpContractInfo) {
+        code = completeZtp20CodeAssembly(selectedOptions as Ztp20Options[], ztpContractInfo);
+      } else {
+        code = completeZtp20CodeAssembly(selectedOptions as Ztp20Options[]);
+      }
     } else if (contractType === "ZTP721") {
-      code = completeZtp721CodeAssembly(selectedOptions as Ztp721Options[]);
+      if (ztpContractInfo) {
+        code = completeZtp721CodeAssembly(selectedOptions as Ztp721Options[], ztpContractInfo);
+      } else {
+        code = completeZtp721CodeAssembly(selectedOptions as Ztp721Options[]);
+      }
+    } else if (contractType === "ZTP1155") {
+      // code = completeZtp1155CodeAssembly(selectedOptions as Ztp1155Options[]);
+      if (ztpContractInfo) {
+        code = completeZtp1155CodeAssembly(ztpContractInfo);
+      } else {
+        code = completeZtp1155CodeAssembly();
+      }
     }
     setGeneratedCode(code);
     setLoading(false);
@@ -103,8 +126,8 @@ export default function Wizard() {
     switch (contractType) {
       case "ZTP20": return Ztp20Options;
       case "ZTP721": return Ztp721Options;
-      case "ZTP1155": return Ztp1155Options;
-      default: return Ztp20Options;
+      // case "ZTP1155": return Ztp1155Options;
+      default: return false;
     }
   };
 
@@ -153,10 +176,13 @@ export default function Wizard() {
           <div id="settings-section" className="w-1/5 bg-black">
             <h2 className="text-lg font-bold">Options</h2>
 
-            <div className="w-full mt-4">
+            <div className="w-full mt-2">
+              <div className="mx-auto w-full max-w-md">
+                <ZtpForm onSubmit={handleFormData}/>
+              </div>
               <div className="mx-auto w-full max-w-md">
                 <RadioGroup value={selectedOptions} className="space-y-2">
-                  {Object.entries(options).map(([key, tooltip]) => (
+                  {options && Object.entries(options).map(([key, tooltip]) => (
                     <Radio
                       key={key}
                       value={key}
@@ -186,7 +212,7 @@ export default function Wizard() {
           <div id="code-section" className="w-4/5 bg-black border rounded-md max-h-screen overflow-y-auto">
           {loading ? (
               <div className="flex items-center justify-center h-full">
-                <Spinner className="w-8 h-8 text-white" /> {/* Adjust class as needed */}
+                <Spinner className="w-8 h-8 text-white"/>
               </div>
             ) : (
               <pre className="overflow-x-auto rounded-md">

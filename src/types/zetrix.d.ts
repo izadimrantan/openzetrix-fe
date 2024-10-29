@@ -18,3 +18,11 @@ interface SmartContractCode {
   name: string;
   code: string;
 }
+
+interface ZtpContractInfo {
+  name: string;
+  symbol: string;
+  description: string;
+  decimals?: string;
+  version: string;
+}

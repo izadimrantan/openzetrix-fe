@@ -14,11 +14,14 @@ export default function AppContext(props: any) {
 
     // List of state that need to be use globally
     const [walletAddress, setWalletAddress] = useState<string>("")
+    const [contractType, setContractType] = useState<string>("ZTP20")
 
     // Set value for context
     const contextValue = {
         walletAddress,
-        setWalletAddress
+        setWalletAddress,
+        contractType,
+        setContractType
     }
 
     return (

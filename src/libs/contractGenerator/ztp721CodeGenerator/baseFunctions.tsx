@@ -2,7 +2,6 @@ export const baseCodePrefixes: SmartContractCode = {
     name: "prefixes",
     code:
 `'use strict';
-
 const ASSET_PRE = 'asset';
 const ASSET_USER_COUNT_PRE = 'asset_user_count';
 const ASSET_OWNER_PRE = 'asset_owner';

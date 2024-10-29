@@ -1,3 +1,48 @@
+export function initCodeGenerator(ztpContractInfo: ZtpContractInfo): string {
+    let initCode = `
+function init() {
+    let paramObj;`
+
+    // ZTP20 or ZTP1155
+    if ('decimals' in ztpContractInfo && ztpContractInfo.decimals !== undefined) {
+        initCode += `
+    paramObj.name = ${ztpContractInfo.name};`
+        initCode += `
+    paramObj.symbol = ${ztpContractInfo.symbol};`
+        initCode += `
+    paramObj.describe = ${ztpContractInfo.description};`
+        initCode += `
+    paramObj.decimals = ${ztpContractInfo.decimals};`
+        initCode += `
+    paramObj.version = ${ztpContractInfo.version};`
+        initCode += `
+    paramObj.protocol = ZTP_PROTOCOL;`
+        initCode += `
+    Chain.store(CONTRACT_PRE, JSON.stringify(paramObj));`
+        initCode += `
+}
+`
+    } else { // ZTP721
+        initCode += `
+    paramObj.name = ${ztpContractInfo.name};`
+        initCode += `
+    paramObj.symbol = ${ztpContractInfo.symbol};`
+        initCode += `
+    paramObj.describe = ${ztpContractInfo.description};`
+        initCode += `
+    paramObj.version = ${ztpContractInfo.version};`
+        initCode += `
+    paramObj.protocol = ZTP_PROTOCOL;`
+        initCode += `
+    Chain.store(CONTRACT_PRE, JSON.stringify(paramObj));`
+        initCode += `
+}
+`
+    }
+
+    return initCode
+}
+
 export function mainCodeGenerator(ztpMainFunctionList: SmartContractCode[]): string {
     let funcList = `
 function main(input_str) {

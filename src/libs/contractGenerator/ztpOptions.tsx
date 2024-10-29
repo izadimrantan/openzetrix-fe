@@ -20,9 +20,11 @@ export const Ztp721OptionsCodeMap: Record<string, SmartContractCode> = {
 }
 
 /* ZTP1155 Configuration of options & mapping */
-export enum Ztp1155Options {
-    Mintable = "Allows the contract deployer to mint tokens.",
-    Burnable = "Allows the contract deployer to burn tokens."
-}
-
-export type ZtpOptions = Ztp20Options | Ztp721Options | Ztp1155Options;
+// export enum Ztp1155Options {
+//     Mintable = "Allows the contract deployer to mint tokens.",
+//     Burnable = "Allows the contract deployer to burn tokens."
+// }
+// export const Ztp1155OptionsCodeMap: Record<string, SmartContractCode> = {
+// }
+// export type ZtpOptions = Ztp20Options | Ztp721Options | Ztp1155Options;
+export type ZtpOptions = Ztp20Options | Ztp721Options;

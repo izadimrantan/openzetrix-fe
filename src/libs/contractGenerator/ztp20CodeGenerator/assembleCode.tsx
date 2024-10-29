@@ -2,7 +2,7 @@ import { approveCode, transferCode, transferFromCode } from './individualMainFun
 import { allowanceCode, balanceOfCode, contractInfoCode } from './individualQueryFunctions';
 import { baseCodePrefixes, utilityCode, initCode } from './baseFunctions';
 import { Ztp20Options, Ztp20OptionsCodeMap } from '../ztpOptions';
-import { mainCodeGenerator, queryCodeGenerator } from '../shared';
+import { initCodeGenerator, mainCodeGenerator, queryCodeGenerator } from '../shared';
 
 const ztp20MainRecipe: SmartContractCode[] = [ 
     approveCode,
@@ -16,7 +16,7 @@ const ztp20QueryRecipe: SmartContractCode[] = [
     contractInfoCode
 ]
 
-export function completeZtp20CodeAssembly(ztp20Options: Ztp20Options[]): string {
+export function completeZtp20CodeAssembly(ztp20Options: Ztp20Options[], ztpContractInfo?: ZtpContractInfo): string {
     const fullMainRecipe = [...ztp20MainRecipe];
     const fullQueryRecipe = [...ztp20QueryRecipe];
     fullMainRecipe.push(...ztp20Options.filter(option => Ztp20OptionsCodeMap[option]).map(option => Ztp20OptionsCodeMap[option]));
@@ -26,7 +26,11 @@ export function completeZtp20CodeAssembly(ztp20Options: Ztp20Options[]): string 
     ztp20Code += utilityCode.code
     ztp20Code += fullMainRecipe.map(recipe => recipe.code).join('');
     ztp20Code += fullQueryRecipe.map(recipe => recipe.code).join('');
-    ztp20Code += initCode.code
+    if (!ztpContractInfo) {
+        ztp20Code += initCode.code
+    } else {
+        ztp20Code += initCodeGenerator(ztpContractInfo)
+    }
     ztp20Code += mainCodeGenerator(fullMainRecipe)
     ztp20Code += queryCodeGenerator(fullQueryRecipe)
     return ztp20Code

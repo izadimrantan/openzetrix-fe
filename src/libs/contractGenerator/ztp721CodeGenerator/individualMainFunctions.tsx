@@ -66,7 +66,7 @@ function setApprovalForAll(paramObj) {
 `
 }
 
-export const mintCode: SmartContractCode = {
+export const mint721Code: SmartContractCode = {
   name: "mint",
   code:
 `
