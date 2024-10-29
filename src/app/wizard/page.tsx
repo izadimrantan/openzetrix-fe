@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
 import { completeZtp20CodeAssembly } from "@/libs/contractGenerator/ztp20CodeGenerator/assembleCode";
+import { completeZtp721CodeAssembly } from "@/libs/contractGenerator/ztp721CodeGenerator/assembleCode";
 import { ZtpOptions, Ztp20Options, Ztp721Options, Ztp1155Options } from "@/libs/contractGenerator/ztpOptions";
 import { RadioGroup, Radio } from "@headlessui/react";
 import { CheckCircleIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
@@ -90,7 +91,9 @@ export default function Wizard() {
     let code = "";
     if (contractType === "ZTP20") {
       code = completeZtp20CodeAssembly(selectedOptions as Ztp20Options[]);
-    } 
+    } else if (contractType === "ZTP721") {
+      code = completeZtp721CodeAssembly(selectedOptions as Ztp721Options[]);
+    }
     setGeneratedCode(code);
     setLoading(false);
   };
