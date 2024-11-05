@@ -31,8 +31,8 @@ export default function ZtpForm({ onSubmit }: ZtpFormProps) {
   
   useEffect(() => {
     const requiredFieldsFilled = name && symbol && description && version
-    const allFieldsFilled = hasDecimals ? requiredFieldsFilled && decimal : requiredFieldsFilled
-    setIsFormValid(allFieldsFilled)
+    const allFieldsFilled = hasDecimals ? requiredFieldsFilled && Boolean(decimal) : requiredFieldsFilled
+    setIsFormValid(Boolean(allFieldsFilled)) // Ensure the value is a boolean
   }, [name, symbol, description, decimal, version, hasDecimals])
 
   const updateSmartContract = () => {
