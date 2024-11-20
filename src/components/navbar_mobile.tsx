@@ -64,8 +64,8 @@ export default function NavbarMobile(props: any) {
                           <li className="" key={item.key}>
                             <Link
                               key={item.key}
-                              className={`ml-3 px-4 py-2 flex font-medium hover:text-text_red ${props.activeKey == item.key
-                                ? "text-text_red font-bold underline underline-offset-8 decoration-4"
+                              className={`ml-3 px-4 py-2 flex font-medium hover:text-text_white ${props.activeKey == item.key
+                                ? "text-text_white font-bold underline underline-offset-8 decoration-4"
                                 : "text-text_secondary"
                                 }`}
                               href={item.link}
