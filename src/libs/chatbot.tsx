@@ -61,9 +61,6 @@ export async function sendMessageToThread(threadId: string, content: string) {
 }
 
 export async function submitAction(runId: any, toolCallOutputs: any, threadId: string) {
-    // const { toolCallOutputs, runId } = await request.json();
-    // const { threadId } = params; // Extract threadId from params
-  
     const stream = openai.beta.threads.runs.submitToolOutputsStream(
       threadId,
       runId,
