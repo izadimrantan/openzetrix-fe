@@ -7,6 +7,10 @@ import Markdown from "react-markdown";
 // @ts-expect-error - no types for this yet
 import { AssistantStreamEvent } from "openai/resources/beta/assistants/assistants";
 import { RequiredActionFunctionToolCall } from "openai/resources/beta/threads/runs/runs";
+import { Popover } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/solid';
+
+import { sendMessageToThread, createThread, submitAction } from "@/libs/chatbot";
 
 type MessageProps = {
   role: "user" | "assistant" | "code";
@@ -77,45 +81,35 @@ const Chat = ({
 
   // create a new threadID when chat component created
   useEffect(() => {
-    const createThread = async () => {
-      const res = await fetch(`/api/assistants/threads`, {
-        method: "POST",
-      });
+    const getThreadID = async () => {
+      const res = await createThread();
       const data = await res.json();
       setThreadId(data.threadId);
     };
-    createThread();
+    getThreadID();
   }, []);
 
   const sendMessage = async (text: string) => {
-    const response = await fetch(
-      `/api/assistants/threads/${threadId}/messages`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          content: text,
-        }),
-      }
-    );
-    // const stream = AssistantStream.fromReadableStream(response.body);
+    const response = await sendMessageToThread(threadId, text);
     const stream = response.body ? AssistantStream.fromReadableStream(response.body) : new AssistantStream(); // Fallback to an empty AssistantStream
     handleReadableStream(stream);
   };
 
   const submitActionResult = async (runId: any, toolCallOutputs: any) => {
-    const response = await fetch(
-      `/api/assistants/threads/${threadId}/actions`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          runId: runId,
-          toolCallOutputs: toolCallOutputs,
-        }),
-      }
-    );
+    // const response = await fetch(
+    //   `/api/assistants/threads/${threadId}/actions`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       runId: runId,
+    //       toolCallOutputs: toolCallOutputs,
+    //     }),
+    //   }
+    // );
+    const response = await submitAction(runId, toolCallOutputs, threadId);
     // const stream = AssistantStream.fromReadableStream(response.body);
     const stream = response.body ? AssistantStream.fromReadableStream(response.body) : new AssistantStream(); // Fallback to an empty AssistantStream
     handleReadableStream(stream);
@@ -252,33 +246,53 @@ const Chat = ({
   }
 
   return (
-    <div className={styles.chatContainer}>
-      <div className={styles.messages}>
-        {messages.map((msg, index) => (
-          <Message key={index} role={msg.role} text={msg.text} />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <form
-        onSubmit={handleSubmit}
-        className={`${styles.inputForm} ${styles.clearfix}`}
-      >
-        <input
-          type="text"
-          className={styles.input}
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          placeholder="Enter your question"
-        />
-        <button
-          type="submit"
-          className={styles.button}
-          disabled={inputDisabled}
-        >
-          Send
-        </button>
-      </form>
-    </div>
+    <Popover className="relative">
+        <Popover.Button className="bg-blue-600 text-white py-2 px-4 rounded-lg">
+        Chat with AI assistant
+        </Popover.Button>
+
+        <Popover.Panel className="absolute right-0 z-10 w-auto h-auto p-4 bg-white border rounded-lg shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">AI Assistant</h3>
+                <Popover.Button>
+                    <XMarkIcon className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                </Popover.Button>
+            </div>
+            <div className="h-96 overflow-y-auto border rounded-md p-2 mb-4">
+                <div className={styles.chatContainer}>
+                    <div className={styles.messages}>
+                        {messages.map((msg, index) => (
+                        <Message key={index} role={msg.role} text={msg.text} />
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center space-x-2">
+                <form
+                    onSubmit={handleSubmit}
+                    className={`${styles.inputForm}`}
+                >
+                    <input
+                    type="text"
+                    className={styles.input}
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    placeholder="Enter your question"
+                    />
+                    <button
+                    type="submit"
+                    className={styles.button}
+                    disabled={inputDisabled}
+                    >
+                    Send
+                    </button>
+                </form>
+            </div>
+
+
+        </Popover.Panel>
+    </Popover>
   );
 };
 

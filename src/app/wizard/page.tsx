@@ -17,7 +17,7 @@ import Spinner from "@/components/spinner";
 import Snackbar from "@/components/snackbar";
 import ZtpForm from "@/components/ztpForm";
 import { useAppContext } from "@/components/app";
-import ChatbotPopup from "@/components/chatbot_popup";
+import Chat from "@/components/chatbot/chat";
 
 export default function Wizard() {
   const router = useRouter();
@@ -167,7 +167,7 @@ export default function Wizard() {
             <ButtonSecondary onClick={copyToClipboard}>Copy to Clipboard</ButtonSecondary>
             <ButtonSecondary onClick={openZetrixIDE}>Deploy on Zetrix IDE</ButtonSecondary>
             <ButtonSecondary onClick={downloadCode}>Download</ButtonSecondary>
-            <ChatbotPopup />
+            <Chat />
             {snackbarOpen && (
               <Snackbar message={snackBarMessage} onClose={handleCloseSnackbar} />
             )}
