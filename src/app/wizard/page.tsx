@@ -29,7 +29,8 @@ export default function Wizard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackBarMessage, setSnackbarMessage] = useState<string>("");
-  
+  const [ztpFormData, setZtpFormData] = useState<ZtpContractInfo>();
+
   const listOfContractTypes = ["ZTP20", "ZTP721", "ZTP1155"];
 
   useEffect(() => {
@@ -51,10 +52,15 @@ export default function Wizard() {
   }, [generatedCode]);
 
   useEffect(() => {
-    generateCode();
+    if(ztpFormData) {
+      generateCode(ztpFormData);
+    } else {
+      generateCode();
+    }
   }, [selectedOptions, contractType]);
 
   const handleFormData = (formData: ZtpContractInfo) => {
+    setZtpFormData(formData)
     generateCode(formData)
   }
 
