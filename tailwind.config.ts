@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         // Card colour
-        foreground: "#1A1212",
+        foreground: "#080202",
         background: "#080202",
         input_background: "#2E2323",
 

@@ -17,6 +17,7 @@ import Spinner from "@/components/spinner";
 import Snackbar from "@/components/snackbar";
 import ZtpForm from "@/components/ztpForm";
 import { useAppContext } from "@/components/app";
+import Chat from "@/components/chatbot/chat";
 
 export default function Wizard() {
   const router = useRouter();
@@ -28,7 +29,8 @@ export default function Wizard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackBarMessage, setSnackbarMessage] = useState<string>("");
-  
+  const [ztpFormData, setZtpFormData] = useState<ZtpContractInfo>();
+
   const listOfContractTypes = ["ZTP20", "ZTP721", "ZTP1155"];
 
   useEffect(() => {
@@ -50,10 +52,15 @@ export default function Wizard() {
   }, [generatedCode]);
 
   useEffect(() => {
-    generateCode();
+    if(ztpFormData) {
+      generateCode(ztpFormData);
+    } else {
+      generateCode();
+    }
   }, [selectedOptions, contractType]);
 
   const handleFormData = (formData: ZtpContractInfo) => {
+    setZtpFormData(formData)
     generateCode(formData)
   }
 
@@ -166,6 +173,7 @@ export default function Wizard() {
             <ButtonSecondary onClick={copyToClipboard}>Copy to Clipboard</ButtonSecondary>
             <ButtonSecondary onClick={openZetrixIDE}>Deploy on Zetrix IDE</ButtonSecondary>
             <ButtonSecondary onClick={downloadCode}>Download</ButtonSecondary>
+            <Chat />
             {snackbarOpen && (
               <Snackbar message={snackBarMessage} onClose={handleCloseSnackbar} />
             )}

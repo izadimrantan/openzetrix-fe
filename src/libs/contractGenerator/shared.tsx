@@ -6,15 +6,15 @@ function init() {
     // ZTP20 or ZTP1155
     if ('decimals' in ztpContractInfo && ztpContractInfo.decimals !== undefined) {
         initCode += `
-    paramObj.name = ${ztpContractInfo.name};`
+    paramObj.name = "${ztpContractInfo.name}";`
         initCode += `
-    paramObj.symbol = ${ztpContractInfo.symbol};`
+    paramObj.symbol = "${ztpContractInfo.symbol}";`
         initCode += `
-    paramObj.describe = ${ztpContractInfo.description};`
+    paramObj.describe = "${ztpContractInfo.description}";`
         initCode += `
-    paramObj.decimals = ${ztpContractInfo.decimals};`
+    paramObj.decimals = "${ztpContractInfo.decimals}";`
         initCode += `
-    paramObj.version = ${ztpContractInfo.version};`
+    paramObj.version = "${ztpContractInfo.version}";`
         initCode += `
     paramObj.protocol = ZTP_PROTOCOL;`
         initCode += `
@@ -24,13 +24,13 @@ function init() {
 `
     } else { // ZTP721
         initCode += `
-    paramObj.name = ${ztpContractInfo.name};`
+    paramObj.name = "${ztpContractInfo.name}";`
         initCode += `
-    paramObj.symbol = ${ztpContractInfo.symbol};`
+    paramObj.symbol = "${ztpContractInfo.symbol}";`
         initCode += `
-    paramObj.describe = ${ztpContractInfo.description};`
+    paramObj.describe = "${ztpContractInfo.description}";`
         initCode += `
-    paramObj.version = ${ztpContractInfo.version};`
+    paramObj.version = "${ztpContractInfo.version}";`
         initCode += `
     paramObj.protocol = ZTP_PROTOCOL;`
         initCode += `
