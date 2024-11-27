@@ -37,7 +37,6 @@ export function completeZtp721CodeAssembly(ztp721Options: Ztp721Options[], ztpCo
     } else {
         ztp721Code += initCodeGenerator(ztpContractInfo)
     }
-    ztp721Code += initCode.code
     ztp721Code += mainCodeGenerator(fullMainRecipe)
     ztp721Code += queryCodeGenerator(fullQueryRecipe)
     return ztp721Code

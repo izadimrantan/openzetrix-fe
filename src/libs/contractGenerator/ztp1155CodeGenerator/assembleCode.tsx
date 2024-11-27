@@ -38,7 +38,6 @@ export function completeZtp1155CodeAssembly(ztpContractInfo?: ZtpContractInfo): 
     } else {
         ztp1155Code += initCodeGenerator(ztpContractInfo)
     }
-    ztp1155Code += initCode.code
     ztp1155Code += mainCodeGenerator(fullMainRecipe)
     ztp1155Code += queryCodeGenerator(fullQueryRecipe)
     return ztp1155Code
