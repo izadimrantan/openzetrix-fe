@@ -107,7 +107,7 @@ export default function Navbar(props: any) {
             </MenuItems>
           </Menu>
         }
-        {!walletAddress && <ButtonPrimary onClick={connectWallet}>Connect Wallet</ButtonPrimary>}
+        {/* {!walletAddress && <ButtonPrimary onClick={connectWallet}>Connect Wallet</ButtonPrimary>} */}
       </div>
     </div>
   );
