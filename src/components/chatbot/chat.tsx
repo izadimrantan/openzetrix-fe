@@ -72,9 +72,16 @@ const Chat = ({
 
   // automatically scroll to bottom of chat
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const chatContainer = document.querySelector(`.${styles.chatContainer}`);
+    chatContainer?.scrollTo({
+      top: chatContainer.scrollHeight,
+      behavior: "smooth",
+    });
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
