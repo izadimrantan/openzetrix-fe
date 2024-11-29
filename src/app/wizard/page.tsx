@@ -57,7 +57,11 @@ export default function Wizard() {
     } else {
       generateCode();
     }
-  }, [selectedOptions, contractType]);
+  }, [selectedOptions]);
+
+  useEffect(() => {
+    generateCode();
+  }, [contractType]);
 
   const handleFormData = (formData: ZtpContractInfo) => {
     setZtpFormData(formData)
